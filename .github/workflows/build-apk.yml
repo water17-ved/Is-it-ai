@@ -34,9 +34,15 @@ jobs:
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@v3
 
-      - name: Sync Capacitor Android Project
+      - name: Setup & Sync Capacitor Android
         run: |
+          if [ ! -d "android" ] || [ ! -f "android/gradlew" ]; then
+            echo "Android folder or gradlew not found in repo. Initializing Capacitor Android..."
+            rm -rf android
+            npx cap add android
+          fi
           npx cap sync android
+          ls -la android
 
       - name: Build Debug APK via Gradle
         working-directory: ./android
