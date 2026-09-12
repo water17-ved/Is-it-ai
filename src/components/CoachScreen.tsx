@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Mission, UserProfile, NavTab } from '../types';
+import { AppLogo } from './AppLogo';
 
 interface CoachScreenProps {
   missions: Mission[];
@@ -58,8 +59,8 @@ export const CoachScreen: React.FC<CoachScreenProps> = ({
       {/* Top App Header */}
       <header className="flex items-center justify-between py-2 mb-3 border-b border-slate-900">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-100 font-bold text-xs tracking-tight shadow-inner">
-            <Target className="w-4 h-4 text-sky-400" />
+          <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 p-1 flex items-center justify-center shadow-sm">
+            <AppLogo size={28} variant="mark" />
           </div>
           <div>
             <div className="flex items-center space-x-2">

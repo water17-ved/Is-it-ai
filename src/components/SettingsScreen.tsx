@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { UserProfile, Mission } from '../types';
 import { BottomSheet } from './BottomSheet';
+import { AppLogo } from './AppLogo';
 
 interface SettingsScreenProps {
   userProfile: UserProfile;
@@ -432,22 +433,31 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         subtitle="Your JEE Preparation Command Center"
       >
         <div className="space-y-3 pb-4 text-xs text-slate-300">
-          <div className="p-3 rounded-2xl bg-gradient-to-tr from-cyan-950/60 to-slate-900 border border-cyan-500/30">
-            <h4 className="text-sm font-black text-white">JEE CORE v2.4.0</h4>
-            <p className="text-cyan-300 font-medium text-xs mt-0.5">
-              "Your JEE Preparation Command Center"
-            </p>
-            <p className="text-slate-300 text-[11px] mt-2 leading-relaxed">
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center space-x-3.5">
+            <AppLogo size={52} variant="card" />
+            <div>
+              <h4 className="text-sm font-bold text-slate-100">JEE CORE v2.4.0</h4>
+              <p className="text-sky-400 font-medium text-xs mt-0.5">
+                Official App Emblem & Theme
+              </p>
+              <p className="text-slate-400 text-[11px] mt-1">
+                Apex Monogram with Orbital Quantum Rings
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs">
+            <p className="text-slate-300 leading-relaxed">
               Designed specifically as a phone-first Android application. Engineered for one-handed operation on 360–430dp screens with zero cognitive clutter.
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5 text-[11px]">
-            <p className="font-bold text-white">Device Target Matrix:</p>
-            <p className="text-slate-300">• 360dp × 640dp (Standard Compact Phone)</p>
-            <p className="text-slate-300">• 393dp × 852dp (Modern Portrait)</p>
-            <p className="text-slate-300">• 412dp × 915dp (Pixel Standard)</p>
-            <p className="text-slate-300">• 430dp × 932dp (Ultra Wide Phone)</p>
+          <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5 text-[11px]">
+            <p className="font-semibold text-slate-200">Device Target Matrix:</p>
+            <p className="text-slate-400">• 360dp × 640dp (Standard Compact Phone)</p>
+            <p className="text-slate-400">• 393dp × 852dp (Modern Portrait)</p>
+            <p className="text-slate-400">• 412dp × 915dp (Pixel Standard)</p>
+            <p className="text-slate-400">• 430dp × 932dp (Ultra Wide Phone)</p>
           </div>
         </div>
       </BottomSheet>

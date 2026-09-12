@@ -13,6 +13,7 @@ import {
   BrainCircuit,
 } from 'lucide-react';
 import { ChatMessage, UserProfile, Mission } from '../types';
+import { AppLogo } from './AppLogo';
 
 interface ChatScreenProps {
   userProfile: UserProfile;
@@ -73,8 +74,8 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
       <div className="shrink-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-850 px-4 py-2.5 flex items-center justify-between z-10">
         <div className="flex items-center space-x-2.5">
           <div className="relative">
-            <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-sky-400">
-              <Bot className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 p-1 flex items-center justify-center shadow-sm">
+              <AppLogo size={24} variant="mark" />
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-slate-900" />
           </div>
