@@ -1,0 +1,6 @@
+{
+  "name": "JEE CORE",
+  "description": "Your JEE Preparation Command Center — Phone-first Android application featuring one-handed coach guidance, mission tracker, focus timer, and AI doubt resolution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
