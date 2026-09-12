@@ -129,11 +129,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     <div className="flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-24 overscroll-contain no-scrollbar">
       {/* Header */}
       <div className="py-1 mb-3">
-        <h2 className="text-xl font-extrabold text-white tracking-tight">Settings</h2>
+        <h2 className="text-lg font-bold text-slate-100 tracking-tight">Settings</h2>
         <p className="text-xs text-slate-400">Preferences & system configurations</p>
       </div>
 
-      {/* Clean Vertical List (Prompt requirement: "Settings should use a clean vertical list.") */}
+      {/* Clean Vertical List */}
       <div className="space-y-2">
         {settingsList.map((item) => {
           const Icon = item.icon;
@@ -146,15 +146,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 setActiveSheet(item.id);
                 if (item.id === 'gemini') checkGeminiPing();
               }}
-              className="w-full bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 p-3.5 rounded-2xl flex items-center justify-between transition-colors touch-press text-left"
+              className="w-full bg-slate-900 hover:bg-slate-850 border border-slate-800 p-3 rounded-xl flex items-center justify-between transition-colors touch-press text-left"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700/60 shrink-0">
-                  <Icon className={`w-5 h-5 ${item.color}`} />
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700/60 shrink-0 text-slate-300">
+                  <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white leading-tight">{item.title}</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">{item.desc}</p>
+                  <h3 className="text-xs font-semibold text-slate-100 leading-tight">{item.title}</h3>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{item.desc}</p>
                 </div>
               </div>
 

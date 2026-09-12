@@ -46,46 +46,46 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({ missions, userProf
     <div className="flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-24 overscroll-contain no-scrollbar">
       {/* Header */}
       <div className="py-1 mb-3">
-        <h2 className="text-xl font-extrabold text-white tracking-tight">Practice History</h2>
+        <h2 className="text-lg font-bold text-slate-100 tracking-tight">Practice Analytics</h2>
         <p className="text-xs text-slate-400">Mastery logs & question taxonomy</p>
       </div>
 
       {/* Streak & Consistency Compact Card */}
-      <div className="rounded-2xl bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-500/30 p-3.5 mb-3 flex items-center justify-between">
+      <div className="rounded-xl bg-slate-900 border border-slate-800 p-3.5 mb-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
-            <Flame className="w-5 h-5 text-amber-400 fill-amber-400" />
+          <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+            <Flame className="w-4 h-4 text-amber-400" />
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="text-base font-extrabold text-white font-mono">
+              <span className="text-sm font-bold text-slate-100 font-mono">
                 {userProfile.streakDays} Days
               </span>
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-1.5 py-0.5 rounded">
-                ACTIVE
+              <span className="text-[10px] bg-slate-800 text-slate-300 font-medium px-1.5 py-0.5 rounded">
+                Active Streak
               </span>
             </div>
-            <p className="text-xs text-slate-300">Target JEE Advanced 2026</p>
+            <p className="text-xs text-slate-400">Target: {userProfile.targetExam}</p>
           </div>
         </div>
 
         <div className="text-right">
-          <span className="text-sm font-bold text-cyan-400 font-mono">{totalSolved}</span>
-          <p className="text-[10px] text-slate-400 uppercase font-semibold">Total Solved</p>
+          <span className="text-sm font-semibold text-slate-100 font-mono">{totalSolved}</span>
+          <p className="text-[10px] text-slate-400 font-medium">Questions Solved</p>
         </div>
       </div>
 
       {/* Subject Distribution Card (Compact, no desktop table) */}
-      <div className="rounded-2xl bg-slate-900 border border-slate-800 p-3.5 mb-3">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">
+      <div className="rounded-xl bg-slate-900 border border-slate-800 p-3.5 mb-3">
+        <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-2.5">
           <span>Subject Problem Ratio</span>
-          <span className="text-slate-400">{totalSolved} PYQs</span>
+          <span className="text-slate-400 font-mono text-[11px]">{totalSolved} PYQs</span>
         </div>
 
         {/* 3-Color Segmented Bar */}
-        <div className="w-full h-3 bg-slate-800 rounded-full flex overflow-hidden mb-3">
+        <div className="w-full h-2 bg-slate-800 rounded-full flex overflow-hidden mb-3">
           <div
-            className="bg-blue-500 h-full"
+            className="bg-sky-500 h-full"
             style={{ width: `${totalSolved ? (physicsSolved / totalSolved) * 100 : 33}%` }}
           />
           <div
@@ -93,24 +93,24 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({ missions, userProf
             style={{ width: `${totalSolved ? (chemistrySolved / totalSolved) * 100 : 33}%` }}
           />
           <div
-            className="bg-purple-500 h-full"
+            className="bg-violet-500 h-full"
             style={{ width: `${totalSolved ? (mathSolved / totalSolved) * 100 : 34}%` }}
           />
         </div>
 
         {/* Subject Breakdown Badges */}
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="bg-slate-800/60 p-2 rounded-xl border border-slate-700/40">
-            <p className="text-[11px] font-bold text-blue-400">Physics</p>
-            <p className="text-sm font-bold text-white font-mono mt-0.5">{physicsSolved} Qs</p>
+          <div className="bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+            <p className="text-[11px] font-medium text-sky-400">Physics</p>
+            <p className="text-xs font-semibold text-slate-100 font-mono mt-0.5">{physicsSolved} Qs</p>
           </div>
-          <div className="bg-slate-800/60 p-2 rounded-xl border border-slate-700/40">
-            <p className="text-[11px] font-bold text-emerald-400">Chemistry</p>
-            <p className="text-sm font-bold text-white font-mono mt-0.5">{chemistrySolved} Qs</p>
+          <div className="bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+            <p className="text-[11px] font-medium text-emerald-400">Chemistry</p>
+            <p className="text-xs font-semibold text-slate-100 font-mono mt-0.5">{chemistrySolved} Qs</p>
           </div>
-          <div className="bg-slate-800/60 p-2 rounded-xl border border-slate-700/40">
-            <p className="text-[11px] font-bold text-purple-400">Maths</p>
-            <p className="text-sm font-bold text-white font-mono mt-0.5">{mathSolved} Qs</p>
+          <div className="bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+            <p className="text-[11px] font-medium text-violet-400">Maths</p>
+            <p className="text-xs font-semibold text-slate-100 font-mono mt-0.5">{mathSolved} Qs</p>
           </div>
         </div>
       </div>
@@ -118,9 +118,9 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({ missions, userProf
       {/* Question Taxonomy Header & Filter Chips */}
       <div className="mb-2">
         <div className="flex items-center justify-between mb-1.5">
-          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Question Taxonomy Bank</span>
+          <h3 className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-sky-400" />
+            <span>Solved Question Taxonomy</span>
           </h3>
           <span className="text-xs text-slate-400 font-mono">
             {filteredQuestions.length} questions
@@ -134,10 +134,10 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({ missions, userProf
               key={sub}
               type="button"
               onClick={() => setSelectedSubject(sub)}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all touch-press ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors touch-press ${
                 selectedSubject === sub
-                  ? 'bg-cyan-500 text-slate-950 font-bold'
-                  : 'bg-slate-800 text-slate-300'
+                  ? 'bg-slate-100 text-slate-900 font-semibold shadow-sm'
+                  : 'bg-slate-900 border border-slate-800 text-slate-300'
               }`}
             >
               {sub}

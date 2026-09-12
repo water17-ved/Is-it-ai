@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { App as CapApp } from '@capacitor/app';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import {
   Mission,
   UserProfile,
@@ -12,7 +15,6 @@ import {
   initialNotifications,
   initialChatMessages,
 } from './data/initialData';
-import { PhoneShell } from './components/PhoneShell';
 import { BottomNavBar } from './components/BottomNavBar';
 import { CoachScreen } from './components/CoachScreen';
 import { MissionScreen } from './components/MissionScreen';
@@ -77,6 +79,43 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('jee_core_notifications', JSON.stringify(notifications));
   }, [notifications]);
+
+  // Configure native Android status bar
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+      StatusBar.setBackgroundColor({ color: '#020617' }).catch(() => {});
+    }
+  }, []);
+
+  // Handle native Android hardware back button
+  useEffect(() => {
+    let backListener: any;
+    if (Capacitor.isNativePlatform()) {
+      CapApp.addListener('backButton', () => {
+        if (activeFocusMission) {
+          setActiveFocusMission(null);
+        } else if (activeDetailMission) {
+          setActiveDetailMission(null);
+        } else if (isCreateMissionOpen) {
+          setIsCreateMissionOpen(false);
+        } else if (isNotificationShadeOpen) {
+          setIsNotificationShadeOpen(false);
+        } else if (activeTab !== 'coach') {
+          setActiveTab('coach');
+        } else {
+          CapApp.exitApp();
+        }
+      }).then((handle) => {
+        backListener = handle;
+      });
+    }
+    return () => {
+      if (backListener) {
+        backListener.remove();
+      }
+    };
+  }, [activeFocusMission, activeDetailMission, isCreateMissionOpen, isNotificationShadeOpen, activeTab]);
 
   // Handle Android Back Gesture / Button
   const handleAndroidBack = () => {
@@ -316,83 +355,109 @@ export default function App() {
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <PhoneShell
-      onBack={handleAndroidBack}
-      onHome={handleAndroidHome}
-      onOpenNotifications={() => setIsNotificationShadeOpen(true)}
-      unreadCount={unreadNotificationsCount}
-      activeNotificationToast={activeNotificationToast}
-      onDismissToast={() => setActiveNotificationToast(null)}
-      onOpenMissionFromToast={(missionId) => {
-        const target = missions.find((m) => m.id === missionId);
-        if (target) {
-          setActiveDetailMission(target);
-        }
-      }}
-    >
-      {/* Screen Views */}
-      <div className="flex-1 flex flex-col overflow-hidden relative">
-        {activeTab === 'coach' && (
-          <CoachScreen
-            missions={missions}
-            userProfile={userProfile}
-            onNavigate={(tab) => setActiveTab(tab)}
-            onStartFocus={(mission) => setActiveFocusMission(mission)}
-            onOpenMissionDetail={(mission) => setActiveDetailMission(mission)}
-            onOpenNotifications={() => setIsNotificationShadeOpen(true)}
-            unreadNotificationsCount={unreadNotificationsCount}
-          />
+    <div className="w-full h-[100dvh] flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none">
+      {/* Centered Mobile App Shell (Full width on phones, max-w-lg on tablets/desktop) */}
+      <div className="w-full max-w-lg mx-auto flex-1 flex flex-col h-full overflow-hidden relative">
+        {/* Floating In-App Heads-up Notification Toast */}
+        {activeNotificationToast && (
+          <div className="absolute top-3 left-3 right-3 z-50 animate-in slide-in-from-top duration-200">
+            <div className="rounded-2xl bg-slate-900/95 border border-cyan-500/50 p-3 shadow-2xl backdrop-blur-md">
+              <div className="flex items-center justify-between text-[11px] text-cyan-400 font-bold mb-1">
+                <span>JEE CORE • {activeNotificationToast.subText}</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveNotificationToast(null)}
+                  className="text-slate-400 hover:text-white p-1"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-xs font-bold text-white mb-2 leading-snug">
+                {activeNotificationToast.message}
+              </p>
+              {activeNotificationToast.actionLabel && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeNotificationToast.missionId) {
+                      const target = missions.find((m) => m.id === activeNotificationToast.missionId);
+                      if (target) setActiveDetailMission(target);
+                    }
+                    setActiveNotificationToast(null);
+                  }}
+                  className="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black py-2 rounded-xl uppercase tracking-wider touch-press"
+                >
+                  {activeNotificationToast.actionLabel}
+                </button>
+              )}
+            </div>
+          </div>
         )}
 
-        {activeTab === 'chat' && (
-          <ChatScreen
-            userProfile={userProfile}
-            currentMission={currentActiveMission}
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            onClearChat={handleClearChat}
-            isLoading={chatLoading}
-            error={chatError}
-            onRetry={() => {
-              if (messages.length > 0) {
-                const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
-                if (lastUserMsg) handleSendMessage(lastUserMsg.content);
-              }
-            }}
-          />
-        )}
+        {/* Primary Screen Views */}
+        <main className="flex-1 flex flex-col overflow-hidden relative">
+          {activeTab === 'coach' && (
+            <CoachScreen
+              missions={missions}
+              userProfile={userProfile}
+              onNavigate={(tab) => setActiveTab(tab)}
+              onStartFocus={(mission) => setActiveFocusMission(mission)}
+              onOpenMissionDetail={(mission) => setActiveDetailMission(mission)}
+              onOpenNotifications={() => setIsNotificationShadeOpen(true)}
+              unreadNotificationsCount={unreadNotificationsCount}
+            />
+          )}
 
-        {activeTab === 'mission' && (
-          <MissionScreen
-            missions={missions}
-            onStartFocus={(mission) => setActiveFocusMission(mission)}
-            onOpenMissionDetail={(mission) => setActiveDetailMission(mission)}
-            onCreateMissionClick={() => setIsCreateMissionOpen(true)}
-            onToggleComplete={handleToggleCompleteMission}
-          />
-        )}
+          {activeTab === 'chat' && (
+            <ChatScreen
+              userProfile={userProfile}
+              currentMission={currentActiveMission}
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              onClearChat={handleClearChat}
+              isLoading={chatLoading}
+              error={chatError}
+              onRetry={() => {
+                if (messages.length > 0) {
+                  const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
+                  if (lastUserMsg) handleSendMessage(lastUserMsg.content);
+                }
+              }}
+            />
+          )}
 
-        {activeTab === 'history' && (
-          <HistoryScreen missions={missions} userProfile={userProfile} />
-        )}
+          {activeTab === 'mission' && (
+            <MissionScreen
+              missions={missions}
+              onStartFocus={(mission) => setActiveFocusMission(mission)}
+              onOpenMissionDetail={(mission) => setActiveDetailMission(mission)}
+              onCreateMissionClick={() => setIsCreateMissionOpen(true)}
+              onToggleComplete={handleToggleCompleteMission}
+            />
+          )}
 
-        {activeTab === 'settings' && (
-          <SettingsScreen
-            userProfile={userProfile}
-            onUpdateProfile={(updated) => setUserProfile((prev) => ({ ...prev, ...updated }))}
-            missions={missions}
-            onResetData={handleResetData}
-            onShowNotificationSample={handleShowSampleNotification}
-          />
-        )}
+          {activeTab === 'history' && (
+            <HistoryScreen missions={missions} userProfile={userProfile} />
+          )}
+
+          {activeTab === 'settings' && (
+            <SettingsScreen
+              userProfile={userProfile}
+              onUpdateProfile={(updated) => setUserProfile((prev) => ({ ...prev, ...updated }))}
+              missions={missions}
+              onResetData={handleResetData}
+              onShowNotificationSample={handleShowSampleNotification}
+            />
+          )}
+        </main>
+
+        {/* Persistent Native Mobile Bottom Navigation Bar */}
+        <BottomNavBar
+          activeTab={activeTab}
+          onSelectTab={(tab) => setActiveTab(tab)}
+          unreadCount={unreadNotificationsCount}
+        />
       </div>
-
-      {/* Persistent Mobile Bottom Navigation Bar */}
-      <BottomNavBar
-        activeTab={activeTab}
-        onSelectTab={(tab) => setActiveTab(tab)}
-        unreadCount={unreadNotificationsCount}
-      />
 
       {/* Focus Timer Bottom Sheet */}
       <BottomSheet
@@ -460,6 +525,6 @@ export default function App() {
           setNotifications([]);
         }}
       />
-    </PhoneShell>
+    </div>
   );
 }

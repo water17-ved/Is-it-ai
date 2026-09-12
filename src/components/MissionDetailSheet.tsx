@@ -44,26 +44,26 @@ export const MissionDetailSheet: React.FC<MissionDetailSheetProps> = ({
   return (
     <div className="flex flex-col space-y-4 pb-4">
       {/* Header Info Banner */}
-      <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-3.5">
-        <div className="flex items-center justify-between text-xs font-bold mb-1">
-          <span className="text-cyan-400">{mission.subject}</span>
-          <span className="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-bold">
-            {mission.priority} PRIORITY
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-3.5">
+        <div className="flex items-center justify-between text-xs font-medium mb-1">
+          <span className="text-sky-400">{mission.subject}</span>
+          <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">
+            {mission.priority} Priority
           </span>
         </div>
-        <h3 className="text-lg font-bold text-white tracking-tight leading-snug">
+        <h3 className="text-base font-semibold text-slate-100 tracking-tight leading-snug">
           {mission.title}
         </h3>
-        <p className="text-xs text-slate-300 mt-1">
+        <p className="text-xs text-slate-400 mt-1">
           {mission.chapter} • Est. {mission.estimatedMinutes} mins
         </p>
 
         {/* Progress status */}
-        <div className="mt-3 pt-2.5 border-t border-slate-700/70 flex items-center justify-between text-xs">
-          <span className="text-slate-300 font-semibold font-mono">
+        <div className="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs">
+          <span className="text-slate-400 font-mono text-[11px]">
             Progress: {mission.completedCount} / {mission.totalQuestions} Questions
           </span>
-          <span className="text-cyan-400 font-bold">
+          <span className="text-slate-300 font-mono font-medium text-[11px]">
             {Math.round((mission.completedCount / mission.totalQuestions) * 100)}%
           </span>
         </div>
@@ -77,7 +77,7 @@ export const MissionDetailSheet: React.FC<MissionDetailSheetProps> = ({
             onStartFocus(mission);
             onClose();
           }}
-          className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black py-2.5 px-3 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-cyan-500/20 touch-press"
+          className="bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold py-2.5 px-3 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow-sm touch-press"
         >
           <Play className="w-3.5 h-3.5 fill-current" />
           <span>Launch Focus Timer</span>
@@ -86,14 +86,14 @@ export const MissionDetailSheet: React.FC<MissionDetailSheetProps> = ({
         <button
           type="button"
           onClick={() => onToggleCompleteMission(mission.id)}
-          className={`font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center space-x-1.5 border touch-press ${
+          className={`font-medium py-2.5 px-3 rounded-lg text-xs flex items-center justify-center space-x-1.5 border touch-press ${
             isCompleted
-              ? 'bg-slate-800 border-slate-700 text-slate-300'
-              : 'bg-emerald-600 hover:bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-600/20'
+              ? 'bg-slate-900 border-slate-800 text-slate-400'
+              : 'bg-slate-800 hover:bg-slate-750 border-slate-700 text-slate-100'
           }`}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
-          <span>{isCompleted ? 'Mark Incomplete' : 'Mark Completed'}</span>
+          <span>{isCompleted ? 'Mark Active' : 'Mark Completed'}</span>
         </button>
       </div>
 

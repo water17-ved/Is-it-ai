@@ -1,0 +1,59 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer Shield / Hexagonal Core Ring -->
+    <path
+        android:strokeColor="#0EA5E9"
+        android:strokeWidth="2.5"
+        android:fillColor="#1E293B"
+        android:pathData="M54,20 L80,35 L80,68 L54,84 L28,68 L28,35 Z" />
+
+    <!-- Inner Quantum / Orbit Ellipse 1 (Rotated) -->
+    <path
+        android:strokeColor="#38BDF8"
+        android:strokeWidth="1.8"
+        android:fillColor="#00000000"
+        android:pathData="M32,54 C32,44 76,44 76,54 C76,64 32,64 32,54 Z" />
+
+    <!-- Quantum Electron 1 -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M32,54 A2.5,2.5 0 1,1 32,54.1 Z" />
+
+    <!-- Quantum Electron 2 -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M76,54 A2.5,2.5 0 1,1 76,54.1 Z" />
+
+    <!-- Diagonal Orbit 2 -->
+    <path
+        android:strokeColor="#0284C7"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M38,38 C46,30 70,70 62,78 C54,86 30,46 38,38 Z" />
+
+    <!-- Central Glowing Core Nucleus -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M54,54 m-10,0 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0" />
+
+    <!-- JC Text Monogram / Core Emblem -->
+    <!-- 'J' -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M48,47 L51,47 L51,57 C51,60 48,61 45,60 L45,58 C46.5,58.5 48,58.2 48,56.8 Z" />
+
+    <!-- 'C' -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M59,47.5 C62,47.5 64,49 64,49 L62.5,51 C62.5,51 61,50 59,50 C56.5,50 54.5,52 54.5,54 C54.5,56 56.5,58 59,58 C61,58 62.5,57 62.5,57 L64,59 C64,59 62,60.5 59,60.5 C54.5,60.5 51.5,57.5 51.5,54 C51.5,50.5 54.5,47.5 59,47.5 Z" />
+
+    <!-- Apex Spark / Pinnacle Star -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M54,26 L55.5,30 L59.5,30 L56.2,32.5 L57.5,36.5 L54,34 L50.5,36.5 L51.8,32.5 L48.5,30 L52.5,30 Z" />
+
+</vector>

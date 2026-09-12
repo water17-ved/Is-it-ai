@@ -34,20 +34,20 @@ export const NotificationShade: React.FC<NotificationShadeProps> = ({
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
 
-          {/* Android Notification Shade Drawer (Sliding down from top status bar) */}
+          {/* Notification Shade Drawer (Sliding down from top) */}
           <motion.div
             initial={{ y: '-100%' }}
             animate={{ y: 0 }}
             exit={{ y: '-100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 320 }}
-            className="relative w-full max-w-md mx-auto bg-slate-900 border-b border-slate-700/80 rounded-b-3xl shadow-2xl flex flex-col max-h-[80vh] z-10 overflow-hidden"
+            className="relative w-full max-w-md mx-auto bg-slate-900 border-b border-slate-700/80 rounded-b-3xl shadow-2xl flex flex-col max-h-[85vh] z-10 overflow-hidden pt-[max(0.75rem,env(safe-area-inset-top))]"
           >
             {/* Header */}
-            <div className="px-4 pt-3 pb-2 flex items-center justify-between border-b border-slate-800">
+            <div className="px-4 pt-2 pb-2.5 flex items-center justify-between border-b border-slate-800">
               <div className="flex items-center space-x-2">
                 <Bell className="w-4 h-4 text-cyan-400" />
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Android Notification Center
+                  JEE CORE Notifications
                 </h3>
               </div>
               <div className="flex items-center space-x-2">

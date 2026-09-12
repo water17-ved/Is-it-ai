@@ -4,13 +4,14 @@ import {
   Clock,
   Play,
   ArrowRight,
-  Sparkles,
-  AlertCircle,
+  Target,
   CheckCircle2,
   ChevronRight,
   Bell,
   MessageSquare,
-  ShieldCheck,
+  BookOpen,
+  TrendingUp,
+  Zap,
 } from 'lucide-react';
 import { Mission, UserProfile, NavTab } from '../types';
 
@@ -33,131 +34,125 @@ export const CoachScreen: React.FC<CoachScreenProps> = ({
   onOpenNotifications,
   unreadNotificationsCount,
 }) => {
-  // Find current active mission (NOW), next queued mission (NEXT), and following mission (AFTER THAT)
+  // Find current active mission, queued missions, and next up
   const activeMission = missions.find((m) => m.status === 'active') || missions[0];
-  const queuedMissions = missions.filter((m) => m.status === 'queued');
+  const queuedMissions = missions.filter((m) => m.status === 'queued' && m.id !== activeMission?.id);
   const nextMission = queuedMissions[0];
-  const afterThatMission = queuedMissions[1] || missions.find((m) => m.status === 'completed');
+  const followingMission = queuedMissions[1];
 
-  // Daily calculation
+  // Daily statistics
   const totalCompletedQuestions = missions.reduce((acc, m) => acc + m.completedCount, 0);
-  const totalEstimatedMins = missions.reduce((acc, m) => acc + (m.status !== 'completed' ? m.remainingMinutes : 0), 0);
-  const percentComplete = Math.min(100, Math.round((totalCompletedQuestions / 70) * 100));
+  const targetQuestions = 50;
+  const totalEstimatedMins = missions.reduce(
+    (acc, m) => acc + (m.status !== 'completed' ? m.remainingMinutes : 0),
+    0
+  );
+  const percentComplete = Math.min(100, Math.round((totalCompletedQuestions / targetQuestions) * 100));
+
+  const activeProgress = activeMission
+    ? Math.round((activeMission.completedCount / activeMission.totalQuestions) * 100)
+    : 0;
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto px-4 pt-3 pb-24 overscroll-contain no-scrollbar">
-      {/* Top Header Bar */}
-      <div className="flex items-center justify-between py-1 mb-2">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-md shadow-cyan-500/20">
-            <span className="text-white font-black text-xs tracking-tighter">JC</span>
+      {/* Top App Header */}
+      <header className="flex items-center justify-between py-2 mb-3 border-b border-slate-900">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-100 font-bold text-xs tracking-tight shadow-inner">
+            <Target className="w-4 h-4 text-sky-400" />
           </div>
           <div>
-            <div className="flex items-center space-x-1.5">
-              <h1 className="text-base font-extrabold text-slate-100 tracking-tight">JEE CORE</h1>
-              <span className="text-[10px] bg-cyan-950 text-cyan-400 font-semibold px-1.5 py-0.5 rounded border border-cyan-800/60">
-                {userProfile.targetExam.replace('JEE ', '')}
+            <div className="flex items-center space-x-2">
+              <h1 className="text-sm font-bold text-slate-100 tracking-tight">JEE Core</h1>
+              <span className="text-[10px] bg-slate-900 text-slate-300 font-medium px-2 py-0.5 rounded-md border border-slate-800">
+                {userProfile.targetExam}
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 font-medium tracking-tight">Your JEE Preparation Command Center</p>
+            <p className="text-[11px] text-slate-400">Daily Study Planner & Coach</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-full">
-            <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span className="text-xs font-bold text-amber-400">{userProfile.streakDays}d</span>
+          <div className="flex items-center space-x-1.5 bg-slate-900/90 border border-slate-800 px-2.5 py-1 rounded-lg">
+            <Flame className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs font-semibold text-slate-200">{userProfile.streakDays}d</span>
           </div>
+
           <button
             id="coach-notification-bell"
             type="button"
             onClick={onOpenNotifications}
-            className="relative p-2 rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-white touch-press"
+            className="relative p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white touch-press"
             aria-label="View notifications"
           >
             <Bell className="w-4 h-4" />
             {unreadNotificationsCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-slate-900" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-sky-400 rounded-full" />
             )}
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Primary Coach Question Prompt */}
-      <div className="mt-1 mb-3">
-        <p className="text-[11px] uppercase tracking-wider font-bold text-cyan-400/90">
-          Command Center
-        </p>
-        <h2 className="text-xl font-extrabold text-white tracking-tight leading-tight">
-          WHAT SHOULD I DO NOW?
-        </h2>
-      </div>
-
-      {/* 1. CURRENT PRIORITY */}
-      <section id="section-current-priority" className="mb-3">
-        <div className="rounded-2xl bg-gradient-to-r from-red-950/40 via-amber-950/30 to-slate-900 border border-red-500/40 p-3 shadow-lg shadow-red-950/20">
-          <div className="flex items-center space-x-2 text-xs font-bold text-red-400 uppercase tracking-wide">
-            <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
-            <span>1. Current Priority</span>
-            <span className="ml-auto bg-red-500/20 text-red-300 text-[10px] px-2 py-0.5 rounded-full font-black border border-red-500/30">
-              URGENT
-            </span>
-          </div>
-          <p className="text-sm font-bold text-slate-100 mt-1.5 leading-snug">
-            Physics Weak Area: {activeMission?.chapter || 'Electrostatics Gauss Law'}
-          </p>
-          <p className="text-xs text-slate-300 mt-1">
-            Target: Solve 13 PYQs (2021–2024) with strict 2.5 min/question pace.
-          </p>
+      {/* Main Status & Greeting */}
+      <section className="mb-4">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+            Today's Focus
+          </span>
+          <span className="text-xs font-mono text-slate-400">
+            {totalCompletedQuestions} / {targetQuestions} solved ({percentComplete}%)
+          </span>
         </div>
+        <h2 className="text-lg font-bold text-slate-100 tracking-tight">
+          Current Study Objective
+        </h2>
       </section>
 
-      {/* 2. CURRENT MISSION */}
+      {/* Active Mission Focus Hero Card */}
       {activeMission && (
-        <section id="section-current-mission" className="mb-3">
+        <section id="section-current-mission" className="mb-4">
           <div
             onClick={() => onOpenMissionDetail(activeMission)}
-            className="rounded-2xl bg-slate-900/90 border border-slate-800 p-3.5 shadow-md hover:border-slate-700 transition-colors cursor-pointer touch-press"
+            className="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 transition-colors hover:border-slate-700 cursor-pointer touch-press relative overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                2. Current Mission
+            <div className="flex items-center justify-between mb-2">
+              <span className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md bg-sky-950/70 border border-sky-800/60 text-sky-300 text-[11px] font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+                <span>In Progress</span>
               </span>
-              <span className="text-[11px] font-semibold text-slate-400">
+              <span className="text-xs font-medium text-slate-400">
                 {activeMission.subject}
               </span>
             </div>
 
-            <h3 className="text-base font-bold text-white tracking-tight">
+            <h3 className="text-base font-semibold text-slate-100 tracking-tight mb-1">
               {activeMission.title}
             </h3>
+            <p className="text-xs text-slate-400 mb-3.5">
+              {activeMission.chapter} • High-yield PYQ sprint (2020–2024)
+            </p>
 
-            {/* Progress Count */}
-            <div className="mt-2 flex items-center justify-between text-xs">
-              <span className="text-slate-300 font-mono font-bold">
-                {activeMission.completedCount} / {activeMission.totalQuestions} Questions
-              </span>
-              <span className="text-cyan-400 font-bold">
-                {Math.round((activeMission.completedCount / activeMission.totalQuestions) * 100)}%
-              </span>
+            {/* Progress Metrics */}
+            <div className="space-y-1.5 mb-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400">
+                  Questions: <span className="text-slate-200 font-mono font-medium">{activeMission.completedCount} / {activeMission.totalQuestions}</span>
+                </span>
+                <span className="text-slate-300 font-mono font-medium">{activeProgress}%</span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-sky-400 h-full rounded-full transition-all duration-300"
+                  style={{ width: `${activeProgress}%` }}
+                />
+              </div>
             </div>
 
-            {/* Progress Bar */}
-            <div className="w-full bg-slate-800 rounded-full h-2 mt-1.5 overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-300"
-                style={{
-                  width: `${(activeMission.completedCount / activeMission.totalQuestions) * 100}%`,
-                }}
-              />
-            </div>
-
-            {/* Meta and Quick Thumb Action */}
-            <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between">
-              <div className="flex items-center space-x-1.5 text-xs text-slate-300 font-medium">
+            {/* Action Bar */}
+            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="flex items-center space-x-1.5 text-xs text-slate-400">
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
-                <span>{activeMission.remainingMinutes} min remaining</span>
+                <span>~{activeMission.remainingMinutes}m remaining</span>
               </div>
 
               <button
@@ -166,40 +161,59 @@ export const CoachScreen: React.FC<CoachScreenProps> = ({
                   e.stopPropagation();
                   onStartFocus(activeMission);
                 }}
-                className="inline-flex items-center space-x-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black shadow-md shadow-cyan-500/25 touch-press"
+                className="inline-flex items-center space-x-2 bg-sky-500 hover:bg-sky-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-semibold shadow-sm touch-press"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>START FOCUS</span>
+                <span>Start Session</span>
               </button>
             </div>
           </div>
         </section>
       )}
 
-      {/* 3. PROGRESS SUMMARY */}
-      <section id="section-progress" className="mb-3">
-        <div className="rounded-2xl bg-slate-900/60 border border-slate-800/80 p-3">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-bold mb-2">
-            <span>3. Today's Progress</span>
-            <span className="text-slate-300">{percentComplete}% Goal Met</span>
+      {/* Priority Weak Area Notice (Clean, non-alarming advisory) */}
+      <section className="mb-4">
+        <div className="rounded-xl bg-slate-900/60 border border-slate-800/80 p-3.5 flex items-start space-x-3">
+          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
+            <Zap className="w-4 h-4" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-0.5">
+              <span className="text-xs font-semibold text-slate-200">Recommended Focus</span>
+              <span className="text-[10px] text-amber-400 font-medium bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                High Priority
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Physics: Practice 10 PYQs in <strong className="text-slate-100 font-medium">Electrostatics & Gauss Law</strong> at a steady 2.5 min/question pace.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Daily Progress Overview Strip */}
+      <section className="mb-4">
+        <div className="rounded-xl bg-slate-900/40 border border-slate-800/80 p-3">
+          <div className="text-xs font-semibold text-slate-300 mb-2.5">
+            Daily Performance Metrics
           </div>
 
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="bg-slate-800/60 rounded-xl p-2 border border-slate-700/40">
-              <p className="text-[10px] text-slate-400 uppercase font-semibold">Done</p>
-              <p className="text-sm font-bold text-white font-mono mt-0.5">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-slate-900/80 rounded-lg p-2.5 border border-slate-800">
+              <p className="text-[10px] text-slate-400 font-medium">Solved Today</p>
+              <p className="text-sm font-semibold text-slate-100 font-mono mt-0.5">
                 {totalCompletedQuestions} Qs
               </p>
             </div>
-            <div className="bg-slate-800/60 rounded-xl p-2 border border-slate-700/40">
-              <p className="text-[10px] text-slate-400 uppercase font-semibold">Remaining</p>
-              <p className="text-sm font-bold text-cyan-400 font-mono mt-0.5">
-                {totalEstimatedMins}m
+            <div className="bg-slate-900/80 rounded-lg p-2.5 border border-slate-800">
+              <p className="text-[10px] text-slate-400 font-medium">Est. Study Left</p>
+              <p className="text-sm font-semibold text-slate-100 font-mono mt-0.5">
+                {totalEstimatedMins} min
               </p>
             </div>
-            <div className="bg-slate-800/60 rounded-xl p-2 border border-slate-700/40">
-              <p className="text-[10px] text-slate-400 uppercase font-semibold">Accuracy</p>
-              <p className="text-sm font-bold text-emerald-400 font-mono mt-0.5">
+            <div className="bg-slate-900/80 rounded-lg p-2.5 border border-slate-800">
+              <p className="text-[10px] text-slate-400 font-medium">Accuracy Pace</p>
+              <p className="text-sm font-semibold text-emerald-400 font-mono mt-0.5">
                 92%
               </p>
             </div>
@@ -207,94 +221,87 @@ export const CoachScreen: React.FC<CoachScreenProps> = ({
         </div>
       </section>
 
-      {/* 4. NOW (Immediate Action) */}
-      <section id="section-now" className="mb-3">
-        <div className="rounded-2xl bg-gradient-to-r from-blue-950/40 to-slate-900 border border-blue-500/30 p-3">
-          <div className="flex items-center justify-between text-xs font-bold text-blue-400 mb-1">
-            <span className="uppercase tracking-wider">4. NOW</span>
-            <span className="bg-blue-500/20 text-blue-300 text-[10px] px-2 py-0.5 rounded font-bold">
-              Immediate
-            </span>
-          </div>
-          <p className="text-sm font-bold text-white">
-            {activeMission ? `Solve next 5 PYQs in ${activeMission.title}` : 'Select a mission from tab'}
-          </p>
-          <p className="text-xs text-slate-300 mt-0.5">
-            Focus Block: 25 minutes pomodoro timer ready to initiate.
-          </p>
-          <div className="mt-2 flex gap-2">
+      {/* Up Next Queue */}
+      {(nextMission || followingMission) && (
+        <section className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-slate-300">Upcoming Missions</span>
             <button
               type="button"
-              onClick={() => activeMission && onStartFocus(activeMission)}
-              className="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center space-x-1.5 touch-press"
+              onClick={() => onNavigate('mission')}
+              className="text-[11px] text-sky-400 hover:text-sky-300 font-medium flex items-center space-x-0.5"
             >
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Launch Focus Timer (25m)</span>
+              <span>View all</span>
+              <ChevronRight className="w-3 h-3" />
             </button>
           </div>
-        </div>
-      </section>
 
-      {/* 5. NEXT (Up next queue) */}
-      {nextMission && (
-        <section id="section-next" className="mb-3">
-          <div
-            onClick={() => onOpenMissionDetail(nextMission)}
-            className="rounded-2xl bg-slate-900/60 border border-slate-800/80 p-3 hover:border-slate-700 cursor-pointer touch-press"
-          >
-            <div className="flex items-center justify-between text-xs font-bold text-slate-400 mb-1">
-              <span className="text-amber-400 uppercase tracking-wider">5. NEXT</span>
-              <span className="text-slate-400 text-[11px]">{nextMission.remainingMinutes} min</span>
-            </div>
-            <p className="text-sm font-bold text-white">{nextMission.title}</p>
-            <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
-              {nextMission.chapter} • {nextMission.completedCount}/{nextMission.totalQuestions} completed
-            </p>
+          <div className="space-y-2">
+            {nextMission && (
+              <div
+                onClick={() => onOpenMissionDetail(nextMission)}
+                className="rounded-xl bg-slate-900/60 border border-slate-800 p-3 hover:border-slate-700 cursor-pointer touch-press flex items-center justify-between"
+              >
+                <div>
+                  <div className="flex items-center space-x-2 mb-0.5">
+                    <span className="text-xs font-medium text-slate-200">{nextMission.title}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {nextMission.completedCount}/{nextMission.totalQuestions}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    {nextMission.subject} • {nextMission.chapter}
+                  </p>
+                </div>
+                <span className="text-xs font-mono text-slate-400 shrink-0 ml-2">
+                  {nextMission.remainingMinutes}m
+                </span>
+              </div>
+            )}
+
+            {followingMission && (
+              <div
+                onClick={() => onOpenMissionDetail(followingMission)}
+                className="rounded-xl bg-slate-900/40 border border-slate-800/60 p-3 hover:border-slate-700 cursor-pointer touch-press flex items-center justify-between"
+              >
+                <div>
+                  <span className="text-xs font-medium text-slate-300 block mb-0.5">
+                    {followingMission.title}
+                  </span>
+                  <p className="text-[11px] text-slate-400">
+                    {followingMission.subject} • {followingMission.chapter}
+                  </p>
+                </div>
+                <span className="text-xs font-mono text-slate-400 shrink-0 ml-2">
+                  {followingMission.remainingMinutes}m
+                </span>
+              </div>
+            )}
           </div>
         </section>
       )}
 
-      {/* 6. AFTER THAT */}
-      {afterThatMission && (
-        <section id="section-after-that" className="mb-4">
-          <div
-            onClick={() => onOpenMissionDetail(afterThatMission)}
-            className="rounded-2xl bg-slate-900/40 border border-slate-800/60 p-3 hover:border-slate-700 cursor-pointer touch-press"
-          >
-            <div className="flex items-center justify-between text-xs font-bold text-slate-400 mb-1">
-              <span className="text-slate-400 uppercase tracking-wider">6. AFTER THAT</span>
-              <span className="text-slate-400 text-[11px]">{afterThatMission.remainingMinutes} min</span>
-            </div>
-            <p className="text-sm font-semibold text-slate-200">{afterThatMission.title}</p>
-            <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
-              {afterThatMission.chapter} • Priority: {afterThatMission.priority}
-            </p>
-          </div>
-        </section>
-      )}
-
-      {/* 7. ASK COACH (Thumb-accessible bottom floating pill) */}
-      <section id="section-ask-coach" className="sticky bottom-2 z-20 mt-auto">
+      {/* Direct Mentor Query Access (Subtle, elegant card) */}
+      <section className="mt-auto pt-1">
         <button
           id="ask-coach-thumb-button"
           type="button"
           onClick={() => onNavigate('chat')}
-          className="w-full bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-2xl p-3 shadow-xl shadow-cyan-950/50 flex items-center justify-between border border-cyan-400/40 touch-press"
+          className="w-full bg-slate-900 hover:bg-slate-850 text-slate-100 rounded-xl p-3 border border-slate-800 hover:border-slate-700 flex items-center justify-between touch-press shadow-sm"
         >
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-cyan-200" />
+          <div className="flex items-center space-x-3 text-left">
+            <div className="w-8 h-8 rounded-lg bg-slate-800 text-sky-400 flex items-center justify-center shrink-0">
+              <MessageSquare className="w-4 h-4" />
             </div>
-            <div className="text-left">
-              <p className="text-[11px] text-cyan-200 font-bold uppercase tracking-wider">7. Direct Mentorship</p>
-              <p className="text-xs font-extrabold text-white">Ask Coach: "How should I crack this doubt?"</p>
+            <div>
+              <p className="text-xs font-semibold text-slate-200">Ask JEE Mentor</p>
+              <p className="text-[11px] text-slate-400">Clear conceptual doubts or get exam tips</p>
             </div>
           </div>
-          <div className="bg-white/20 p-1.5 rounded-xl">
-            <ArrowRight className="w-4 h-4 text-white" />
-          </div>
+          <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
         </button>
       </section>
     </div>
   );
 };
+
